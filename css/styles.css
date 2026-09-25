@@ -1,0 +1,503 @@
+/* ============================================================================
+   CSS DO SISTEMA DE ELETIVAS
+   ----------------------------------------------------------------------------
+   Paleta de cores (definida como variáveis CSS — para trocar a cor do sistema
+   inteiro, basta alterar os valores abaixo):
+   - Azul-marinho (cor principal): #1D3D7D e tons derivados
+   - Cinza (neutros de apoio)     : #f1f3f7, #64748b
+   - Amarelo (destaque/botões)    : #FFC94D e #f0b429
+   - Verde/vermelho (sucesso/erro): apenas em mensagens de feedback
+   ============================================================================ */
+
+/* ----- Definição da paleta (variáveis usadas em todo o arquivo) ----- */
+:root {
+  --azul-primario: #1D3D7D;   /* azul-marinho principal (sidebar, botões) */
+  --azul-escuro:   #142B5C;   /* azul mais escuro (hover, cabeçalhos) */
+  --azul-claro:    #EAF0FB;   /* fundo azul suave (cards, destaques) */
+  --azul-borda:    #C6D4EC;   /* bordas azuis suaves */
+
+  --amarelo:       #FFC94D;   /* amarelo de destaque */
+  --amarelo-forte: #D99A00;   /* amarelo escuro para texto/bordas */
+
+  --cinza-fundo:   #F4F5F8;   /* fundo geral da página */
+  --cinza-texto:  #64748B;   /* texto secundário */
+  --cinza-borda:   #E2E8F0;   /* bordas neutras */
+
+  --branco:        #FFFFFF;
+  --verde-sucesso: #15803D;
+  --vermelho-erro: #DC2626;
+  --vermelho-claro:#FEE2E2;
+
+  --raio: 10px;               /* arredondamento padrão de cards/botões */
+  --sombra: 0 2px 10px rgba(20, 43, 92, 0.08); /* sombra suave padrão */
+}
+
+/* ----- Reset básico: zera margens e o box-sizing em todos os elementos ----- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ----- Corpo da página: fonte padrão e fundo cinza claro ----- */
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif; /* fonte do sistema */
+  background: var(--cinza-fundo);
+  color: var(--azul-escuro);
+  min-height: 100vh; /* ocupa no mínimo a altura total da tela */
+}
+
+/* ----- Classe utilitária: esconde um elemento da tela ----- */
+.oculto { display: none !important; }
+
+/* ============================================================================
+   COMPONENTES BASE: botões, tabelas, formulários, badges
+   ============================================================================ */
+
+/* ----- Botões ----- */
+.btn {
+  display: inline-flex;            /* alinha ícone e texto lado a lado */
+  align-items: center;
+  gap: 6px;                        /* espaço entre ícone e texto */
+  border: none;                    /* remove borda padrão do navegador */
+  border-radius: var(--raio);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;                 /* mãozinha ao passar o mouse */
+  transition: background 0.2s, transform 0.1s; /* animação suave */
+}
+.btn:active { transform: scale(0.97); } /* efeito de "clicado" */
+
+.btn-primario { background: var(--azul-primario); color: var(--branco); }
+.btn-primario:hover { background: var(--azul-escuro); }
+
+/* Botão amarelo para a ação de destaque da tela */
+.btn-amarelo { background: var(--amarelo); color: var(--azul-escuro); }
+.btn-amarelo:hover { background: #f0b429; }
+
+.btn-secundario { background: var(--azul-claro); color: var(--azul-primario); }
+.btn-secundario:hover { background: var(--azul-borda); }
+
+.btn-perigo { background: var(--vermelho-claro); color: var(--vermelho-erro); }
+.btn-perigo:hover { background: #fecaca; }
+
+.btn-pequeno { padding: 6px 10px; font-size: 12px; border-radius: 7px; }
+.btn-largo { width: 100%; justify-content: center; }
+
+/* ----- Cards (caixas brancas com sombra, usadas em toda a interface) ----- */
+.card {
+  background: var(--branco);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Título interno do card + botão de ação alinhado à direita */
+.card-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;               /* em telas pequenas, empilha */
+  margin-bottom: 16px;
+}
+.card-cabecalho h2 { font-size: 18px; color: var(--azul-primario); }
+.card-cabecalho p  { font-size: 13px; color: var(--cinza-texto); }
+
+/* ----- Formulários ----- */
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--azul-escuro);
+}
+input, select, textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--cinza-borda);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--branco);
+  color: var(--azul-escuro);
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;                          /* remove o contorno padrão */
+  border-color: var(--azul-primario);    /* realça o campo ativo em azul */
+  box-shadow: 0 0 0 3px rgba(29, 61, 125, 0.12);
+}
+textarea { resize: vertical; min-height: 120px; }
+
+/* Linha de campos lado a lado (vira coluna em telas pequenas) */
+.linha-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* Mensagem de erro exibida abaixo de campos inválidos */
+.msg-erro { color: var(--vermelho-erro); font-size: 12px; margin-top: 4px; }
+
+/* ----- Tabelas ----- */
+.tabela-limite { overflow-x: auto; } /* permite rolar a tabela no celular */
+table {
+  width: 100%;
+  border-collapse: collapse; /* remove espaços entre células */
+  font-size: 14px;
+}
+thead th {
+  text-align: left;
+  background: var(--azul-claro);
+  color: var(--azul-primario);
+  padding: 10px 12px;
+  font-size: 12px;
+  text-transform: uppercase; /* títulos em MAIÚSCULAS */
+  letter-spacing: 0.4px;
+  white-space: nowrap;       /* impede quebra do título */
+}
+tbody td {
+  padding: 10px 12px;
+  border-top: 1px solid var(--cinza-borda);
+  vertical-align: middle;
+}
+tbody tr:hover { background: var(--azul-claro); } /* realça a linha sob o mouse */
+
+/* ----- Badges (etiquetas coloridas de status/perfil) ----- */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;   /* formato de pílula */
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge-azul    { background: var(--azul-claro); color: var(--azul-primario); }
+.badge-amarelo { background: #FFF4D6; color: var(--amarelo-forte); }
+.badge-verde   { background: #DCFCE7; color: var(--verde-sucesso); }
+.badge-cinza   { background: var(--cinza-borda); color: var(--cinza-texto); }
+
+/* ----- Barra de pesquisa e filtros no topo das listas ----- */
+.filtros {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.filtros input, .filtros select { max-width: 240px; }
+
+/* ----- Estado vazio (mensagem quando não há registros) ----- */
+.vazio {
+  text-align: center;
+  color: var(--cinza-texto);
+  padding: 30px 10px;
+  font-size: 14px;
+}
+
+/* ----- Linha de ações dentro da tabela (botões Editar/Excluir) ----- */
+.acoes { display: flex; gap: 6px; }
+.acoes .btn { white-space: nowrap; }
+
+/* ============================================================================
+   TELA DE LOGIN
+   ============================================================================ */
+
+/* Fundo da tela de login: azul-marinho com leve gradiente */
+.tela-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;   /* centraliza verticalmente */
+  justify-content: center; /* e horizontalmente */
+  background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-primario) 60%, #2C5297 100%);
+  padding: 20px;
+}
+
+/* Card branco central do formulário de login */
+.login-card {
+  background: var(--branco);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  padding: 34px 30px;
+  width: 100%;
+  max-width: 380px;
+}
+.login-card form { margin-top: 18px; }
+.login-card label { margin-top: 12px; }
+.login-card input { margin-bottom: 4px; }
+
+/* Cabeçalho do login: círculo azul com a letra "E" */
+.login-logo { text-align: center; }
+.login-logo h1 { font-size: 20px; color: var(--azul-primario); margin-top: 10px; }
+.login-logo p  { font-size: 13px; color: var(--cinza-texto); }
+
+.logo-circulo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--azul-primario);
+  color: var(--amarelo);
+  font-size: 32px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(29, 61, 125, 0.35);
+}
+.logo-circulo.pequeno { width: 38px; height: 38px; font-size: 19px; margin: 0; }
+
+/* Mensagem de erro do login (e-mail/senha incorretos) */
+.login-erro {
+  background: var(--vermelho-claro);
+  color: var(--vermelho-erro);
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin: 10px 0 4px;
+}
+
+/* Painel expansível com as credenciais de demonstração */
+.login-dicas {
+  margin-top: 18px;
+  font-size: 13px;
+  background: var(--cinza-fundo);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--cinza-texto);
+}
+.login-dicas summary { cursor: pointer; font-weight: 600; color: var(--azul-primario); }
+.login-dicas ul { margin: 10px 0 4px; padding-left: 18px; display: grid; gap: 8px; }
+.login-dicas li strong { color: var(--azul-primario); }
+
+/* ============================================================================
+   LAYOUT DO PAINEL (aplicação logada)
+   ============================================================================ */
+
+/* Container geral: sidebar fixa à esquerda + conteúdo ocupando o resto */
+.aplicacao {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ----- Sidebar (barra lateral azul-marinho) ----- */
+.sidebar {
+  width: 250px;
+  background: var(--azul-primario);
+  color: var(--branco);
+  display: flex;
+  flex-direction: column;   /* logo no topo, menu no meio, usuário embaixo */
+  position: fixed;          /* fixa na tela, não rola com a página */
+  top: 0; bottom: 0; left: 0;
+  z-index: 50;
+  transition: transform 0.25s; /* desliza suave no modo mobile */
+}
+
+/* Logo da barra lateral */
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.sidebar-logo strong { display: block; font-size: 15px; }
+.sidebar-logo span { font-size: 11px; opacity: 0.8; }
+
+/* Menu de navegação: lista de links */
+.sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: background 0.15s;
+}
+.sidebar-nav a:hover { background: rgba(255, 255, 255, 0.12); }
+/* Link da tela atualmente ativa: fundo amarelo discreto */
+.sidebar-nav a.ativo { background: var(--amarelo); color: var(--azul-escuro); font-weight: 700; }
+
+/* Rodapé da sidebar: usuário logado + botão Sair */
+.sidebar-rodape {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.info-usuario { display: flex; flex-direction: column; font-size: 12px; }
+.usuario-nome  { font-weight: 700; }
+.usuario-perfil {
+  text-transform: capitalize; /* Secretária -> "secretaria" com inicial maiúscula */
+  opacity: 0.8;
+}
+/* Botão sair estilizado para contrastar com o fundo azul */
+#btn-sair { background: rgba(255, 255, 255, 0.15); color: var(--branco); }
+#btn-sair:hover { background: rgba(220, 38, 38, 0.85); }
+
+/* ----- Área de conteúdo (à direita da sidebar) ----- */
+.conteudo {
+  flex: 1;
+  margin-left: 250px; /* mesma largura da sidebar fixa */
+  padding: 26px 30px 60px;
+  max-width: 100%;
+}
+
+/* Título principal de cada tela */
+.titulo-tela { margin-bottom: 22px; }
+.titulo-tela h1 { font-size: 22px; color: var(--azul-escuro); }
+.titulo-tela p  { font-size: 13px; color: var(--cinza-texto); margin-top: 4px; }
+
+/* ----- Cards de estatística do dashboard ----- */
+.grid-stats {
+  display: grid;
+  /* Cria colunas automáticas de no mínimo 200px (4 por linha no desktop) */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.stat {
+  background: var(--branco);
+  border: 1px solid var(--cinza-borda);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  padding: 18px;
+  border-left: 5px solid var(--azul-primario); /* filete azul à esquerda */
+}
+.stat.numero { font-size: 30px; font-weight: 800; color: var(--azul-primario); }
+.stat.rotulo { font-size: 13px; color: var(--cinza-texto); margin-top: 2px; }
+/* Variação amarela para o card de matrículas */
+.stat.destaque-amarelo { border-left-color: var(--amarelo-forte); }
+
+/* ----- Aviso/avaliação de acesso somente leitura ----- */
+.aviso-consulta {
+  background: #FFF4D6;
+  border: 1px solid var(--amarelo);
+  color: var(--amarelo-forte);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+/* ----- Histórico por semestre (tela de relatórios) ----- */
+.semestre-bloco { margin-bottom: 18px; }
+.semestre-titulo {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--azul-primario);
+  background: var(--azul-claro);
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin-bottom: 8px;
+}
+
+/* ----- Toasts (notificações que surgem no canto inferior) ----- */
+.toasts {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 340px;
+}
+.toast {
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--branco);
+  font-size: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  animation: entrar 0.25s ease; /* animação definida abaixo */
+}
+.toast-sucesso { background: var(--verde-sucesso); }
+.toast-erro     { background: var(--vermelho-erro); }
+.toast-aviso    { background: var(--amarelo-forte); }
+
+/* Quadradinhos de animação usados pelos toasts */
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(10px); } /* começa invisível e abaixo */
+  to   { opacity: 1; transform: translateY(0); }    /* termina no lugar */
+}
+
+/* ============================================================================
+   MODAL (janela que se abre por cima da tela, para formulários)
+   ============================================================================ */
+
+/* Fundo escurecido que cobre a página atrás do modal */
+.modal-fundo {
+  position: fixed;
+  inset: 0;                 /* cobre 100% da tela */
+  background: rgba(20, 43, 92, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+/* Caixa branca central do modal */
+.modal-caixa {
+  background: var(--branco);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto; /* rola internamente se for muito alto */
+  padding: 24px;
+  animation: entrar 0.2s ease;
+}
+.modal-caixa h2 { font-size: 18px; color: var(--azul-primario); margin-bottom: 16px; }
+
+/* Botão "X" de fechar no canto do modal */
+.modal-fechar {
+  float: right;
+  border: none;
+  background: var(--cinza-fundo);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--cinza-texto);
+}
+.modal-fechar:hover { background: var(--cinza-borda); }
+
+/* Rodapé do modal: botões Salvar/Cancelar */
+.modal-acoes { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+
+/* ============================================================================
+   RESPONSIVIDADE (ajustes para telas pequenas / celular)
+   ============================================================================ */
+
+/* Botão ☰ que abre o menu no celular: escondido no desktop */
+.btn-menu-mobile { display: none; }
+
+@media (max-width: 820px) {
+  /* No celular a sidebar começa fora da tela (deslizante) */
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.aberta { transform: translateX(0); }
+
+  /* O conteúdo passa a ocupar toda a largura */
+  .conteudo { margin-left: 0; padding: 18px 14px 60px; }
+
+  /* Botão ☰ visível, fixo no topo */
+  .btn-menu-mobile {
+    display: block;
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 60;
+    background: var(--azul-primario);
+    color: var(--branco);
+    border: none;
+    border-radius: 8px;
+    width: 40px; height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  /* Título desloca para não ficar sob o botão ☰ */
+  .titulo-tela { padding-left: 52px; }
+}
