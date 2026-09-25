@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  SISTEMA DE GESTÃO DE ELETIVAS — ENSINO MÉDIO (SEDUC/CE)
+  ============================================================================
+  Este arquivo é a "casca" do sistema (Single Page Application).
+  Todo o conteúdo das telas é gerado pelos arquivos JavaScript da pasta /js.
+
+  COMO FUNCIONA:
+  1. O navegador carrega o CSS (estilos) e todos os scripts JS na ordem.
+  2. O js/app.js detecta se há alguém logado (js/auth.js) e decide
+     entre mostrar a tela de login ou o painel principal.
+  3. Cada "tela" (view) é um arquivo dentro de js/views/.
+
+  COMO EDITAR:
+  - Cores e visual .............. css/styles.css (variáveis no topo)
+  - Credenciais de acesso ....... js/config.js
+  - Regras de negócio ........... js/models.js
+  - Persistência de dados ........ js/storage.js
+  - Telas individuais ........... js/views/*.js
+  ============================================================================
+-->
+<html lang="pt-BR">
+<head>
+  <!-- Meta tags: configuração básica de exibição da página -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestão de Eletivas — Ensino Médio</title>
+  <meta name="description" content="Sistema de cadastro e consulta de disciplinas eletivas do novo Ensino Médio." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%231D3D7D'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23FFC94D' font-family='Arial' font-weight='bold'>E</text></svg>" />
+
+  <!-- Folha de estilos principal do sistema -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ======================================================================
+       TELA DE LOGIN
+       Fica escondida por padrão. O js/auth.js mostra quando ninguém
+       está autenticado (adiciona a classe "visivel").
+       ====================================================================== -->
+  <div id="tela-login" class="tela-login">
+    <!-- Card central do login: logo, formulário e dica de credenciais -->
+    <div class="login-card">
+      <div class="login-logo">
+        <!-- "E" estilizada no círculo azul-marinho (identidade do sistema) -->
+        <div class="logo-circulo">E</div>
+        <h1>Gestão de Eletivas</h1>
+        <p>Novo Ensino Médio — Seduc/CE</p>
+      </div>
+
+      <!-- Formulário de acesso: e-mail + senha -->
+      <form id="form-login" autocomplete="off">
+        <label for="login-email">E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" required />
+
+        <label for="login-senha">Senha</label>
+        <input type="password" id="login-senha" placeholder="Digite sua senha" required />
+
+        <!-- Mensagem de erro (e-mail/senha inválidos) aparece aqui -->
+        <p id="login-erro" class="login-erro oculto"></p>
+
+        <button type="submit" class="btn btn-primario btn-largo">Entrar</button>
+      </form>
+
+      <!-- Painel com as credenciais de demonstração de cada perfil.
+           Facilita o teste pela secretaria. Para remover do ar,
+           apague este bloco ou comente-o. -->
+      <details class="login-dicas">
+        <summary>Credenciais de acesso (demonstração)</summary>
+        <ul>
+          <li><strong>Secretaria</strong> (acesso completo):<br>
+            secretaria@escola.ce.gov.br · Secretaria@2026</li>
+          <li><strong>Professor</strong> (somente consulta):<br>
+            professor@escola.ce.gov.br · Professor@2026</li>
+          <li><strong>Aluno</strong> (somente consulta):<br>
+            aluno@escola.ce.gov.br · Aluno@2026</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       APLICAÇÃO PRINCIPAL (painel)
+       Também fica escondida até o login ser validado.
+       ====================================================================== -->
+  <div id="aplicacao" class="aplicacao oculto">
+
+    <!-- ====================== BARRA LATERAL ====================== -->
+    <!-- Menu de navegação. Os itens são gerados pelo js/app.js conforme
+         o perfil do usuário logado (secretaria vê tudo; professor e
+         aluno veem apenas as telas de consulta). -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-circulo pequeno">E</div>
+        <div>
+          <strong>Gestão de Eletivas</strong>
+          <span>Ensino Médio · Seduc/CE</span>
+        </div>
+      </div>
+
+      <!-- Nav de links. O JS injeta os itens com base nas permissões. -->
+      <nav class="sidebar-nav" id="menu-nav"><!-- itens gerados via JS --></nav>
+
+      <!-- Rodapé da sidebar: quem está logado + botão sair -->
+      <div class="sidebar-rodape">
+        <div class="info-usuario">
+          <span id="usuario-nome" class="usuario-nome"></span>
+          <span id="usuario-perfil" class="usuario-perfil"></span>
+        </div>
+        <button id="btn-sair" class="btn btn-perigo btn-pequeno">Sair</button>
+      </div>
+    </aside>
+
+    <!-- ====================== ÁREA DE CONTEÚDO ====================== -->
+    <!-- Botão que aparece só em telas pequenas para abrir/fechar o menu -->
+    <button id="btn-menu-mobile" class="btn-menu-mobile" aria-label="Abrir menu">☰</button>
+
+    <main class="conteudo" id="conteudo">
+      <!-- Cada tela (view) é renderizada aqui dentro pelo roteador
+           do js/app.js, substituindo o conteúdo anterior. -->
+    </main>
+  </div>
+
+  <!-- Container de notificações (toasts) no canto da tela -->
+  <div id="toasts" class="toasts"></div>
+
+  <!-- Container de modais (formulários de edição etc.) -->
+  <div id="modal-container"></div>
+
+  <!-- ====================== CARREGAMENTO DOS SCRIPTS ======================
+       A ordem importa! Cada arquivo só pode usar o que foi carregado antes:
+       1. config.js ..... constantes, credenciais e permissões
+       2. storage.js ..... camada de salvamento (localStorage)
+       3. models.js ...... regras de negócio (validações das entidades)
+       4. ui.js .......... utilitários de interface (toast, modal, tabela)
+       5. views/*.js ..... as telas do sistema
+       6. app.js ......... roteador + inicialização (por último)
+  ====================================================================== -->
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/models.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+
+  <!-- Telas do sistema -->
+  <script src="js/views/login.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/eletivas.js"></script>
+  <script src="js/views/alunos.js"></script>
+  <script src="js/views/matriculas.js"></script>
+  <script src="js/views/relatorios.js"></script>
+  <script src="js/views/admin.js"></script>
+
+  <!-- Roteador: precisa vir por último para conhecer todas as views -->
+  <script src="js/app.js"></script>
+</body>
+</html>
